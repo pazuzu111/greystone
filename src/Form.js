@@ -51,11 +51,17 @@ export default class Form extends Component {
             body: JSON.stringify(data)
         })
         .then(response => response.json())
-        .then(res => {
-            console.log(res)
+        .then(response => {
+            console.log(response)
         })
     }
 
+    addProperty = () => {
+        this.setState({
+            rentRoll: this.state.rentRoll.concat([[0,1,2,3,4,5,6,7]])
+        })
+
+    }
 
   render() {
     let address = this.state.address.map((x,i) => {
