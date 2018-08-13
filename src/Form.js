@@ -2,16 +2,51 @@ import React, { Component } from 'react';
 
 
 export default class Form extends Component {
-  constructor() {
-    super();
+    constructor() {
+        super();
 
-    this.state = {
-      address: ['street','city','state','county','zip'],
-      rentRoll: [['monthlyRent','unit Number','vacancy','bedrooms','bathrooms','annual total']],
-      expenses: ['marketing','taxes','insurance','repairs','administration','payroll','utility','management'],
-      capRate: 3.22
+        this.state = {
+            address: ['street','city','state','county','zip'],
+            rentRoll: [['monthlyRent','unit Number','vacancy','bedrooms','bathrooms','annual-total']],
+            expenses: ['marketing','taxes','insurance','repairs','administration','payroll','utility','management'],
+            terms: null,
+        }
     }
-  }
+
+    componentDidMount() {
+        console.log(this)
+         const data = {
+            income: 300012, // Annual collected rent (Sum of all rents * 12)
+            expenses: 22000, // Total expenses value
+            rate: 3.22, // cap rate
+            noi: 20000, // Net Operating Income (income - expenses)
+            address: {
+                street: '1 bacon street',
+                city: 'brooklyn',
+                state: 'NY',
+                county: 'kings county',
+                zip: '11216'
+            }
+        }
+
+        fetch('https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbwPGz6uQQS9IW33ASPYlcWaEtRMD8eDAK1ONg7lT2dREXpaSUYh/exec', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(response => {
+            console.log(response.terms)
+                this.setState({
+                terms: response.terms
+            })
+
+
+        })
+    }
 
 
     handleSubmit = (e) => {
@@ -21,11 +56,11 @@ export default class Form extends Component {
         let income = 0
 
         this.state.expenses.map(i => {
-            return expenseSum += parseInt(this[`expense${i}`].value)
+            return expenseSum += parseInt(this[`${i}`].value)
         })
 
         this.state.rentRoll.map((index, el) => {
-            return income += parseInt(this[`rentInput${el}0`]['value'])
+            return income += parseInt(this[`${el}0`]['value'])
         })
 
         const data = {
@@ -52,13 +87,15 @@ export default class Form extends Component {
         })
         .then(response => response.json())
         .then(response => {
-            console.log(response)
+            this.setState({
+                terms: response.terms[0]
+            })
         })
     }
 
     addProperty = () => {
         this.setState({
-            rentRoll: this.state.rentRoll.concat([[0,1,2,3,4,5,6,7]])
+            rentRoll: this.state.rentRoll.concat([['monthlyRent','unit Number','vacancy','bedrooms','bathrooms','annual-total']])
         })
 
     }
@@ -79,7 +116,7 @@ export default class Form extends Component {
                         return (
                             <div key={i}>
                                 <input
-                                    ref={input => {this[`expense${i}`] = input}}
+                                    ref={input => {this[`{i}`] = input}}
                                     placeholder={i}
                                  />
                             </div>
@@ -91,36 +128,56 @@ export default class Form extends Component {
                             return (
                                 <div key={i}>
                                     <input
-                                        ref={input => {this[`rentInput${el}${i}`] = input}}
+                                        ref={input => {this[`${i}${el}`] = input}}
                                         placeholder={i}
                                      />
                                 </div>
                             )
                         })
                     })
+
+    let terms = this.state.terms?
+                    this.state.terms.map((x, i) => {
+                        if(i < 3)
+                        {
+                            return (
+                                <div key={i}>
+                                    <h2> {i+1})</h2>
+                                    <h3> Loan amount: ${x['75% LTV Proceeds'].toFixed(2)}</h3>
+                                    <h3> Debt Rate: {x['Interest Rate'] * 100}%</h3>
+                                    <h3> Value: ${x['Value'].toFixed(2)}</h3>
+                                    <br />
+                                </div>
+                            )
+                        }
+                    })
+                    :
+                    null
+
+
     return (
          <div>
-            <label>Enter address</label>
+            <label> Enter Address </label>
+                {address}
 
-            {address}
+            <label> Enter Property Details</label>
+                {rentRoll}
+                <button onClick={this.addProperty}> add property </button>
+                <br />
 
+            <label> Enter Expenses </label>
+                {expenses}
+                <br />
 
-            <label>Enter rent roll</label>
-            {rentRoll}
-            <button onClick={this.addProperty}> add property </button>
-           <br />
-
-            <label>Enter expenses</label>
-            {expenses}
-           <br />
-
-            <label>Enter cap rate</label>
-                       <br />
+            <label> Enter Cap Rate </label>
+                <br />
 
             <input name="capRate" />
 
             <button onClick={this.handleSubmit}> send data </button>
 
+            <h1> TERMS </h1>
+            {terms}
         </div>
 
 

@@ -7,9 +7,12 @@ import './App.css';
 class App extends Component {
   render() {
     return (
-      <div>
-        <Form />
-      </div>
+        <div className="wrapper">
+            <div className="form">
+                <Form />
+            </div>
+        </div>
+
     );
   }
 }
