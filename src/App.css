@@ -19,6 +19,10 @@ h1, h3, h2 {
   display: block;
 }
 
+h3 span {
+  text-align: right;
+}
+
 .form {
   background: transparent;
   padding: 17%;
