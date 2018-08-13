@@ -156,8 +156,10 @@ export default class Form extends Component {
 
             <button onClick={this.handleSubmit}> send data </button>
 
-            <h1> TERMS </h1>
+            <div id='terms'>
+                <h1> TERMS </h1>
                 {terms}
+            </div>
         </div>
     )
   }
